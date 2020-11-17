@@ -1,0 +1,73 @@
+table {
+    width: 100%;
+}
+
+th.mat-sort-header-sorted {
+    color: black;
+}
+
+.mat-form-field {
+    font-size: 14px;
+    width: 95%;
+    padding-left: 10px;
+}
+
+.example-loading-shade {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 56px;
+    right: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+/* .mat-footer-row,
+.mat-header-row,
+.mat-row {
+    display: inline-flex;
+    min-width: 100%;
+} */
+th.mat-column-name{
+    padding: 10px 10px 10px 10px;
+}
+/* .mat-column-tag {
+    flex: 0 0 10px;
+    background-color: blue;
+    padding: 20px 20px 20px 20px;
+}
+
+.mat-column-IsLoaned{
+    flex: 0 0 10px;
+    background-color: blue;
+}
+th.mat-column-IsLoanedExtended{
+    flex: 0 0 10px;
+    background-color: blue;
+}
+th.mat-column-loanedUser{
+    flex: 0 0 10px;
+    background-color: blue;
+}
+th.mat-column-returnDate {
+    flex: 0 0 10px;
+    background-color: blue;
+}
+
+th.mat-column-returnDateExtended{
+    flex: 0 0 10px;
+    background-color: blue;
+}
+
+th.mat-column-defaultLoanDay{
+    flex: 0 0 10px;
+    background-color: blue;
+}
+th.mat-column-extendLoanDay{
+    flex: 0 0 10px;
+    background-color: blue;
+} */
+

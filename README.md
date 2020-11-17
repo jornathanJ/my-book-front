@@ -1,3 +1,6 @@
+ng serve 하고 나면 4200 이 아니라 4201로 접속합니다.
+원래 하던 프로젝트랑 겹치면 안됩니다.
+
 # MyBookLibrary
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.1.

@@ -1,0 +1,24 @@
+{
+    "/persistent" :{
+        "target" : "http://localhost:8080",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug"
+    },
+    "/books" :{
+        "target" : "http://localhost:8080",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug"
+    },
+    "/stomp/*": {
+        "target": {
+          "host": "localhost",
+          "protocol": "http:",
+          "port": 8083
+        },
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug"
+      }
+}

@@ -1,0 +1,33 @@
+<button mat-icon-button color="primary" (click)="hide()"> 
+  <mat-icon>double_arrow</mat-icon>
+</button>
+
+
+<div class="example-loading-shade" *ngIf="isLoading">
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+</div>
+
+<mat-card *ngIf="bookInfo != null && bookInfo !== undefined" class="example-card">
+  <mat-card-header>
+    <div mat-card-avatar class="example-header-image"></div>
+    <mat-card-title *ngIf="isLoading == false && bookInfo.items.length > 0" [innerHTML]="bookInfo.items[0].title"></mat-card-title>
+    <mat-card-subtitle *ngIf="isLoading == false && bookInfo.items.length > 0" [innerHTML]="bookInfo.items[0].author"></mat-card-subtitle>
+  </mat-card-header>
+  <img mat-card-sd-image style="display: block; margin: 0px auto; padding-bottom: 10px;" 
+  *ngIf="isLoading == false && bookInfo.items.length > 0"
+  [src]="bookInfo.items[0].image" >
+  <mat-card-content>
+      <p *ngIf="bookInfo.items.length != 0 && bookInfo.items.length > 0" [innerHTML]="bookInfo.items[0].description"></p>
+      <br>
+      <span *ngIf="bookInfo.items.length != 0 && bookInfo.items.length > 0">출판일자 : </span><span [innerHTML]="bookInfo.items[0].pubdate"></span>
+      <br>
+      <span *ngIf="bookInfo.items.length != 0 && bookInfo.items.length > 0">ISBN : </span><span [innerHTML]="bookInfo.items[0].isbn"></span>
+      <span *ngIf="bookInfo.items.length == 0">책 정보를 찾을 수 없습니다.</span>
+  </mat-card-content>
+  <mat-card-actions >
+    <button *ngIf="isLoading == false && bookInfo.items.length > 0" mat-raised-button ><a [href]="bookInfo.items[0].link" target="_blank">자세히(웹으로 이동)</a></button>    
+    <button *ngIf="isLoading == false && bookInfo.items.length > 0" mat-raised-button (click)="saveBookDetail()">책정보 저장</button>
+    <button *ngIf="bookInfo.items.length == 0" mat-raised-button >검색어 직접 입력</button>
+    <button *ngIf="bookInfo.items.length == 0" mat-raised-button >ISBN 저장</button>
+  </mat-card-actions>
+</mat-card>
