@@ -4,12 +4,10 @@
  */
 export class User {
     constructor(
-        public id: number,
-        public username: string,
-        public password: string,
-        public firstName: string,
-        public lastName: string,
-        public token: string) { };
+        public id: string,
+        public engName: string,
+        public korName: string){
+        }
 }
 
 /**
@@ -17,11 +15,11 @@ export class User {
  */
 export class UserMaker {
     static create(data: User): User {
-        return new User(data.id, data.username, data.password, data.firstName, data.lastName, data.token);
+        return new User(data.id, data.engName, data.korName);
     }
 
     static initialize(): User {
-        return new User(0, "", "", "", "", "");
+        return new User("", "", "");
     }
 }
 

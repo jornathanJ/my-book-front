@@ -3,6 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/shared/service/authentication.service';
 import { User } from 'src/app/shared/class/user';
+import { MyBookService } from 'src/app/shared/service/my-book.service';
+import { DataSharedService } from 'src/app/shared/service/dataShareService';
 //import { CommonSharedModule } from ;
 
 @Component({
@@ -18,38 +20,48 @@ export class RegisterComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthenticationService
-) {
+    private authenticationService: AuthenticationService,
+    private myBookService: MyBookService,
+    private dataSharedService: DataSharedService
+  ) {
     // // redirect to home if already logged in
     // if (this.authenticationService.currentUserValue()) {
     //     this.router.navigate(['/']);
     // }
-}
+  }
 
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    //throw new Error('Method not implemented.');
   }
 
   powers = ['Really Smart', 'Super Flexible',
-            'Super Hot', 'Weather Changer'];
+    'Super Hot', 'Weather Changer'];
 
-  model = new User(0, "", "", "", "");
+  model: User = new User("", "", "");
 
   submitted = false;
 
-  onSubmit() { this.submitted = true; }
+  onSubmit() {
+    this.submitted = true;
+    this.myBookService.saveUser(this.model)
+    .subscribe(
+      responseUser => {
+        alert("Success to register.");
+        this.dataSharedService.loginUser = responseUser;
+      },
+      error => {
+        alert("Fail to register.");
+        console.log(error);
+      }
+    );
+    console.log(this.model);
+  }
 
   // TODO: Remove this when we're done
   get diagnostic() { return JSON.stringify(this.model); }
 
-  newHero() {
-    this.model = new User(0, "", "", "", "");
-  }
-
-  skyDog(): User {
-    const myHero =  new User(0, "", "", "", "");
-    console.log('My User is called ' + myHero.fullName); // "My hero is called SkyDog"
-    return myHero;
+  resetField() {
+    this.model = new User("", "", "");
   }
 
   //////// NOT SHOWN IN DOCS ////////
@@ -58,7 +70,7 @@ export class RegisterComponent implements OnInit {
   //   Name via form.controls = {{showFormControls(heroForm)}}
   showFormControls(form: any) {
     return form && form.controls.name &&
-    form.controls.name.value + ' ' + form.controls.password.value; // Dr. IQ
+      form.controls.name.value + ' ' + form.controls.password.value; // Dr. IQ
   }
 
   /////////////////////////////

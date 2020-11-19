@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BookInfoListResult, MybookDetail, MyBookVO } from '../../interface/book-info-interface';
+import { BookInfoListResult, MybookDetail, MyBook } from '../../interface/book-info-interface';
 
 /**
  * Naver Open API를 사용해서 책의 정보를 가져오는 기능입니다.
@@ -19,10 +19,10 @@ export class BookDetailComponent implements OnInit {
   public naverOpenAPIUrl = '/books/naver/search';
   public bookInfo: BookInfoListResult = {};
   isLoading = false;
-  public currentBook: MyBookVO;
+  public currentBook: MyBook;
   public currentBookDetail: MybookDetail;
 
-  item: MybookDetail = {
+  emptyItem: MybookDetail = {
     title: '',
     author: '',
     image: '',
@@ -34,7 +34,7 @@ export class BookDetailComponent implements OnInit {
   constructor(private http: HttpClient) {
     this.bookInfo = {};
     this.bookInfo.items = [];
-    this.bookInfo.items[0] = this.item;
+    this.bookInfo.items[0] = this.emptyItem;
   }
 
   ngOnInit() {
@@ -44,30 +44,34 @@ export class BookDetailComponent implements OnInit {
     this.buttonClicked.emit('HIDE');
   }
 
-  showBookInfo(selectedBook: MyBookVO) {
+  showBookInfo(selectedBook: MyBook) {
     this.isLoading = true;
     this.currentBook = selectedBook;
 
+    // data 초기화
     if (this.bookInfo !== undefined && this.bookInfo != null) {
       this.bookInfo.items = [];
-      this.bookInfo.items.push(this.item);
+      this.bookInfo.items.push(this.emptyItem);
     } else {
-      // this.bookInfo = {};
+      // TODO: ?? 머 해야 하지?this.bookInfo = {};
     }
 
-    if (selectedBook.mybookDetail && selectedBook.mybookDetail.isbn) {
+    if (selectedBook.hasDetailInfo) {
       console.log('Already saved data.');
 
-      this.bookInfo.items = [];
-      this.bookInfo.items.push(selectedBook.mybookDetail);
-      this.isLoading = false;
-      return;
+      this.http.get<MyBook>(`${this.bookAPIUrl}/${selectedBook.id}`)
+      .subscribe(bookData => {
+        this.bookInfo.items = [];
+        this.bookInfo.items.push(bookData.mybookDetail);
+        this.isLoading = false;
+        return;
+      });
     }
 
     this.http.request<BookInfoListResult>('GET', this.naverOpenAPIUrl + '/d_titl', {
       withCredentials: true,
       params: {
-        keyword: selectedBook.name
+        keyword: selectedBook.title
       }
     }).subscribe(result => {
       console.log(result);
@@ -88,8 +92,8 @@ export class BookDetailComponent implements OnInit {
   }
 
   saveBookDetail() {
-    this.currentBook.mybookDetail.tag = this.currentBook.tag;
-    this.http.request<BookInfoListResult>('PUT', this.bookAPIUrl, {
+    this.currentBook.mybookDetail.tag = this.currentBook.id;
+    this.http.request<BookInfoListResult>('PATCH', this.bookAPIUrl, {
       withCredentials: true,
       body: this.currentBook
     }).subscribe(result => {

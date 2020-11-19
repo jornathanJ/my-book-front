@@ -12,12 +12,23 @@
   <table mat-table [dataSource]="dataSource" matSort>
     <ng-container *ngFor="let col of columnInfoList" [matColumnDef]="col.binding">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ col.header }} </th>
-      <td mat-cell *matCellDef="let element" > {{ checkTextExist(col.type, col.binding, col.subBind, element) }} 
-        <button *ngIf="(col.type != undefined) && (col.type == 'button')"
+      <td mat-cell *matCellDef="let element" > {{ checkTextExist(col.type, col.binding, col.subBind, element) }}
+        <button *ngIf="col.type == 'button'"
         mat-raised-button [disabled] ="element[col.binding]" 
-          (click)="$event.stopPropagation();btnClicked(row)">
+          (click)="$event.stopPropagation();btnClicked(element, col.binding, element[col.binding])">
           {{ col.header }}
         </button>
+        <button *ngIf="col.type == 'buttonTF'"
+        mat-raised-button [disabled] ="element[col.binding]"  [color] = "element[col.binding] ? 'warn' : 'primary'"
+          (click)="$event.stopPropagation();btnClicked(element, col.binding, element[col.binding])">
+          {{ element[col.binding] ? col.conditionTF.trueText : col.conditionTF.falseText }}
+        </button>
+        <span *ngIf="col.type == 'booleanText'">
+          {{ element[col.binding] ? col.conditionTF.trueText : col.conditionTF.falseText }}
+        </span>
+        <mat-chip-list *ngIf="col.type == 'chips'">
+          <mat-chip  disableRipple selected>{{ element[col.binding] }}</mat-chip>
+        </mat-chip-list>
       </td>
     </ng-container>
 

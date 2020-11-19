@@ -1,9 +1,16 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatTableDataSource, MatSort } from '@angular/material';
 import { SharedMatTableComponent } from 'src/app/shared/component/shared-mat-table/shared-mat-table.component';
-import { ColumnInfo } from 'src/app/shared/interface/book-info-interface';
-
+import { ColumnInfo, MyBook } from 'src/app/shared/interface/book-info-interface';
+import { createAction, State, Store, select } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { MyBookEffects } from 'src/app/shared/service/my-book.effects';
+import { filter, map, distinctUntilChanged } from 'rxjs/operators'
+import { MyBookAppState, getMyBookSelector } from 'src/app/shared/service/my-book.reducer';
+import { GetMyBooksListAction } from 'src/app/shared/service/my-book.action';
+import { DataSharedService } from 'src/app/shared/service/dataShareService';
+import { User } from 'src/app/shared/class/user';
 
 export interface PeriodicElement {
   name: string;
@@ -12,88 +19,122 @@ export interface PeriodicElement {
   symbol: string;
 }
 
-const ELEMENT_DATA: any[] = [
-  {position: '1-1aa', name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: '2-1aa', name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: '3-1aa', name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: '4-1aa', name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: '5-1aa', name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: '6-1aa', name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: '7-1aa', name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: '8-1aa', name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: '9-1aa', name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: '10-1aa', name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-];
-
 @Component({
   selector: 'app-book-list',
   templateUrl: './book-list.component.html',
   styleUrls: ['./book-list.component.css']
 })
-export class BookListComponent implements OnInit, AfterViewInit {
+export class BookListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild('aa') matTable: SharedMatTableComponent;
+  @ViewChild('matTable') matTable: SharedMatTableComponent;
 
   public bookList: any;
-  public bookLists: any;
   public baseBookListUrl = '/books';
   public naverOpenAPIUrl = '/books/naver/search';
 
-  displayedColumns: string[];
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
-
-  displayedColumns2: string[] = ['position', 'name', 'weight', 'symbol'];
-  dataSource2 = ELEMENT_DATA;
-
-  columnInfoList: ColumnInfo [] = [
-    { header : ' Tag     ', binding : 'tag' },
-    { header : ' Name ', binding : 'name' },
-    { header : ' 대출 ', binding : 'loaned', type: 'button', conditionTF: {trueValue: '대출 가능', falseValue: '대출 불가'} },
-    { header : ' 연장여부 ', binding : 'loanedExtended' },
-    { header : ' 대출자 ', binding : 'loanedUser' },
-    { header : ' 반납일 ', binding : 'returnDate' },
-    // { header : ' 기한연장 ', binding : 'returnDateExtended' },
-    // { header : ' defaultLoanDay ', binding : 'defaultLoanDay' },
-    // { header : ' extendLoanDay ', binding : 'extendLoanDay' },
-    { header : '  ISBN ', binding : 'mybookDetail', subBind: 'isbn' },
+  columnInfoList: ColumnInfo[] = [
+    { header: ' Tag     ', binding: 'id', type: 'normal'},
+    { header: ' Title ', binding: 'title' , type: 'normal'},
+    { header: ' 대출 ', binding: 'isLoaned', type: 'buttonTF', conditionTF: { trueText: '대출 불가', falseText: '대출 가능' } },
+    { header: ' Status ', binding: 'bookStatus' , type: 'normal'},
+    { header: ' 대출자 ', binding: 'currentUserName' , type: 'normal'},
+    { header: ' 세부정보 ', binding: 'hasDetailInfo', type: 'booleanText', conditionTF: { trueText: '있음', falseText: '없음' } },
+    //{ header: '  ISBN ', binding: 'mybookDetail', subBind: 'isbn' },
   ];
 
+  state: State<MyBook[]>;
+  mybooks$: Observable<MyBook[]>;// = this.store.select(state => state.mybooks);
+  //mybooks$ = this.store.pipe(select(getPnuProvinces));
 
+  loginUser: User;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private store: Store<MyBookAppState>,
+    private sharedService: DataSharedService
+  ) {
+  }
+
+  ngOnDestroy(): void {
+  }
   // @ViewChild(MatSort) sort: MatSort;
 
   ngOnInit() {
+    //아래와 같이 초기화 하는 방법도 있네?
+    //this.mybooks$ = this.store.pipe(select(state => state.mybooks));
+    this.mybooks$ = this.store.select(getMyBookSelector);
+
+    this.sharedService.userEventEmitted$
+    .subscribe(changedUser => this.loginUser = changedUser);
+  }
+
+  ngAfterViewInit(): void {
+    this.mybooks$
+    .pipe(
+      distinctUntilChanged((previous: MyBook [], current: MyBook []) => {
+        let result: boolean = JSON.stringify(previous) == JSON.stringify(current);
+        console.log("distinctUntilChanged :p", previous);
+        console.log("distinctUntilChanged :q", current);
+        console.log("distinctUntilChanged result : ", result);
+        if (result == true){
+          if (this.matTable.dataSource == null || this.matTable.dataSource.data == null){
+            this.bookList = current;
+            this.bindData(this.bookList );
+          }
+          this.matTable.openLoading(false);
+        }
+        return result;
+      })
+      )
+    .subscribe((list) => {
+      if (list.length == 0) {
+        return;
+      }
+      console.log("this.store.select(", this.store);
+      console.log("this.store.select(", list);
+      this.bookList = list;
+      this.bindData(this.bookList );
+      this.matTable.openLoading(false);
+    });
     // this.displayedColumns = this.columnInfoList.map(x => x.binding);
     // console.log(this.displayedColumns);
     // console.log(this.columnInfo);
     // this.dataSource.sort = this.sort;
     // console.log(this.matTable);
-  }
+    this.mybooks$.subscribe((data) => {
+      if (data.length == 0) {
+        return;
+      }
+      console.log("this.mybooks$.subscribe", data)
+    });
 
-  ngAfterViewInit(): void {
-    this.matTable.openLoading(true);
+    //this.store.dispatch(new GetMyBooksListAction());
+    this.refreshBookList();
     console.log(this.matTable);
-    this.getBookFromOpenAPI();
-    this.getBookList();
+    //this.getBookFromOpenAPI();
+    //this.getBookList_OLD();
   }
 
   finishNgAfterViewInit(event) {
     console.log(this.matTable);
   }
 
-  test() {
+  refreshBookList() {
     console.log(this.matTable);
     this.matTable.clearData();
     this.matTable.openLoading(true);
-    this.getBookList();
+
+    this.store.dispatch(new GetMyBooksListAction());
   }
 
   getBookList(): any {
+  }
+
+  getBookList_OLD(): any {
     this.http.request('GET', this.baseBookListUrl + "/all", {
       withCredentials: true,
       params: {
-        title : 'Programming Language'
+        title: 'Programming Language'
       }
     }).subscribe(result => {
       console.log(result);
@@ -110,7 +151,7 @@ export class BookListComponent implements OnInit, AfterViewInit {
     this.http.request('GET', this.naverOpenAPIUrl + '/d_titl', {
       withCredentials: true,
       params: {
-        keyword : 'Programming Language'
+        keyword: 'Programming Language'
       }
     }).subscribe(result => {
       console.log(result);
@@ -122,8 +163,8 @@ export class BookListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  bindData(data) {
-    this.matTable.bindData(data);
+  bindData(dataSource: any[]) {
+    this.matTable.bindData(dataSource);
   }
 
 }

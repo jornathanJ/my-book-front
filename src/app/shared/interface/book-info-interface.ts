@@ -21,17 +21,14 @@ export interface MybookDetail {
 }
 
 
-export interface MyBookVO {
-    tag?: string;
-    name?: string;
-    loaned?: boolean;
-    loanedExtended?: boolean;
-    loanedUser?: string;
-    returnDate?: Date;
-    returnDateExtended?: boolean;
-
-    defaultLoanDay?: number;
-    extendLoanDay?: number;
+export interface MyBook {
+    id: string;
+    title: string;
+    bookStatus: string;
+    currentUserName?: string;
+    currentUserId?: string;
+    hasDetailInfo: boolean;
+    isLoaned: boolean;
     mybookDetail?: MybookDetail;
 }
 
@@ -39,13 +36,13 @@ export interface ColumnInfo {
     header?: string;
     binding?: string;
     subBind?: string;                    // data source에 nested object의 값을 사용할때 사용합니다. 단, 1단계까지만 가능 합니다.
-    type?: 'normal' | 'button';          // Cell의 type을 지정합니다.
+    type: 'normal' | 'button' | 'buttonTF' | 'booleanText'| 'chips';          // Cell의 type을 지정합니다.
     conditionTF?: ColumnTFCondition;
 }
 
 export interface ColumnTFCondition {
-    trueValue: string;      // 조건이 참일때 표시할 Text
-    falseValue: string;
+    trueText: string;      // 조건이 참일때 표시할 Text
+    falseText: string;
 }
 
 // export interface ColumnValueCondition {

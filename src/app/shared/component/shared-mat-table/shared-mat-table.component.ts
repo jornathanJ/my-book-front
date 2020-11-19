@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, Input, Output, AfterViewInit, EventEmitter } from '@angular/core';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
-import { EventInfo } from '../../interface/event-info.interface';
+import { ColumnInfo } from '../../interface/book-info-interface';
+import { EventInfo, EVENT_NAME } from '../../interface/event-info.interface';
 import { DataSharedService } from '../../service/dataShareService';
 
 
@@ -35,7 +36,7 @@ const ELEMENT_DATA: PeriodicElement[] = [
 })
 export class SharedMatTableComponent implements OnInit, AfterViewInit {
 
-  @Input() columnInfoList: any[];
+  @Input() columnInfoList: ColumnInfo[];
   @Output() loadEvent: EventEmitter<string> = new EventEmitter();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -49,6 +50,7 @@ export class SharedMatTableComponent implements OnInit, AfterViewInit {
   constructor(private sharedService: DataSharedService) { }
   ngAfterViewInit(): void {
     console.log(this.sort);
+    this.displayedColumns = this.columnInfoList.map(x => x.binding);
     this.loadEvent.emit('Finished');
   }
 
@@ -62,17 +64,25 @@ export class SharedMatTableComponent implements OnInit, AfterViewInit {
   // }
 
   bindData(dataSource: any[]) {
-    this.displayedColumns = this.columnInfoList.map(x => x.binding);
+    
     this.dataSource = new MatTableDataSource(dataSource);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
   }
 
-  btnClicked(row) {
-    console.log('Row button clicked: ', row);
+  /**
+   * 현재 선택된 버튼의 정보를 가져 옵니다. 클릭된 값을 사용하려면 rowData[bindingName] 을 사용하면 될 거 같다.
+   *
+   * @param rowData 현재 Row data 전체
+   * @param bindingName rowData중에서 ColumnInfo.binding에 설정한 값
+   */
+  btnClicked(rowData: any, bindingName: string, bindingValue: any) {
+    console.log(`Row button clicked: ${bindingName} and ${rowData[bindingName]}`);
     const eventInfo: EventInfo = {
-      eventData: row,
-      eventName: 'BUTTON_CLICKED'
+      eventData: rowData,
+      eventName: EVENT_NAME.BUTTON_CLICKED,
+      identifier: bindingName,
+      value: bindingValue
     };
     this.sharedService.emitChange(eventInfo);
   }
@@ -81,7 +91,7 @@ export class SharedMatTableComponent implements OnInit, AfterViewInit {
     console.log('Row clicked: ', row);
     const eventInfo: EventInfo = {
       eventData: row,
-      eventName: 'ROW_CLICKED'
+      eventName: EVENT_NAME.ROW_CLICKED
     };
     this.sharedService.emitChange(eventInfo);
   }
@@ -100,7 +110,7 @@ export class SharedMatTableComponent implements OnInit, AfterViewInit {
 
   checkTextExist(columnType: string, bindingName: string, subBind: string, data: any): string {
 
-    if (columnType === 'button') {
+    if (columnType === 'button' || columnType === 'buttonTF' || columnType === 'booleanText' || columnType === 'chips' ) {
       return '';
     }
 

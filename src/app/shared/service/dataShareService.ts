@@ -1,5 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
+import { User } from '../class/user';
 
 @Injectable({
     providedIn : 'root'
@@ -18,4 +19,15 @@ export class DataSharedService // implements OnDestroy
     // ngOnDestroy() {
     //     this.emitChangeSource.unsubscribe();
     // }
+
+    public loginUser: User;
+
+    private userChangeSource = new Subject<User>();
+    // Observable string streams
+    userEventEmitted$ = this.userChangeSource.asObservable();
+    // Service message commands
+    userChange(changeUser: any) {
+        this.loginUser = changeUser;
+        this.userChangeSource.next(changeUser);
+    }
 }

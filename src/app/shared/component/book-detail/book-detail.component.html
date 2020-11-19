@@ -25,7 +25,7 @@
       <span *ngIf="bookInfo.items.length == 0">책 정보를 찾을 수 없습니다.</span>
   </mat-card-content>
   <mat-card-actions >
-    <button *ngIf="isLoading == false && bookInfo.items.length > 0" mat-raised-button ><a [href]="bookInfo.items[0].link" target="_blank">자세히(웹으로 이동)</a></button>    
+    <button *ngIf="isLoading == false && bookInfo.items.length > 0" mat-raised-button ><a [href]="bookInfo.items[0].link" target="_blank">웹에서 보기</a></button>    
     <button *ngIf="isLoading == false && bookInfo.items.length > 0" mat-raised-button (click)="saveBookDetail()">책정보 저장</button>
     <button *ngIf="bookInfo.items.length == 0" mat-raised-button >검색어 직접 입력</button>
     <button *ngIf="bookInfo.items.length == 0" mat-raised-button >ISBN 저장</button>

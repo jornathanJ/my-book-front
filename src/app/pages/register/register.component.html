@@ -4,27 +4,27 @@
     <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
       <div class="form-group">
         <mat-form-field>
-          <input matInput placeholder="영문이름" [(ngModel)]="model.username" name="username" required/>
+          <input matInput placeholder="영문이름" [(ngModel)]="model.engName" name="username" required/>
         </mat-form-field>
       </div>
       <div class="form-group">
         <mat-form-field>
-          <input matInput placeholder="사번(A/BXXX)" [(ngModel)]="model.password" name="password" required/>
+          <input matInput placeholder="사번(A/BXXX)" [(ngModel)]="model.id" name="password" required/>
         </mat-form-field>
       </div>
 
       <div class="form-group">
         <mat-form-field>
-          <input matInput placeholder="성명(홍길동)" [(ngModel)]="model.fullName" name="firstName" />
+          <input matInput placeholder="한글이름(홍길동)" [(ngModel)]="model.korName" name="firstName" />
         </mat-form-field>
       </div>
     
 
-      <button style="margin-right: 10px;" type="submit" class="btn btn-success" [disabled]="!heroForm.form.valid">
-        Submit
+      <button mat-raised-button style="margin-right: 10px;" type="submit" class="btn btn-success" [disabled]="!heroForm.form.valid">
+        등록
       </button>
-      <button type="button" class="btn btn-default" (click)="newHero(); heroForm.reset()" >
-        Reset
+      <button mat-raised-button type="button" class="btn btn-default" (click)="resetField(); heroForm.reset()" >
+        다시 시작
       </button>
       <!-- NOT SHOWN IN DOCS 
       <div>
@@ -38,16 +38,16 @@
   <div [hidden]="!submitted">
     <h2>작성한 내용을 확인해 주세요:</h2>
     <div class="row">
-      <div class="col-xs-3">Name</div>
-      <div class="col-xs-9">{{ model.fullName }}</div>
+      <div class="col-xs-3">영문이름</div>
+      <div class="col-xs-9">{{ model.engName }}</div>
     </div>
     <div class="row">
-      <div class="col-xs-3">password</div>
-      <div class="col-xs-9">{{ model.password }}</div>
+      <div class="col-xs-3">ID</div>
+      <div class="col-xs-9">{{ model.id }}</div>
     </div>
     <div class="row">
-      <div class="col-xs-3">firstName</div>
-      <div class="col-xs-9">{{ model.fullName }}</div>
+      <div class="col-xs-3">한글이름</div>
+      <div class="col-xs-9">{{ model.korName }}</div>
     </div>
     <br />
     <button class="btn btn-primary" (click)="submitted = false">Edit</button>

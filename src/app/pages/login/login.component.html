@@ -1,24 +1,24 @@
-﻿<h2>Login</h2>
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
-        <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
-            <div *ngIf="f.username.errors.required">Username is required</div>
+﻿<div class="container">
+    <h2>Login</h2>
+    <form  (ngSubmit)="onSubmit()" #heroForm="ngForm">
+        <div class="form-group">
+            <mat-form-field>
+              <input matInput placeholder="영문이름" [(ngModel)]="model.engName" name="engName" required/>
+            </mat-form-field>
+          </div>
+        <div class="form-group">
+            <mat-form-field>
+              <input matInput placeholder="사번" [(ngModel)]="model.id" name="id" required/>
+            </mat-form-field>
+          </div>
+        <div class="form-group">
+            <button mat-raised-button style="margin-right: 10px;"  class="btn btn-primary">
+                <!-- <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span> -->
+                Login
+            </button>
+            <button mat-raised-button type="button" style="margin-right: 10px;"  class="btn btn-default" (click)="register()"  >
+                Register
+              </button>
         </div>
-    </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
-        <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
-            <div *ngIf="f.password.errors.required">Password is required</div>
-        </div>
-    </div>
-    <div class="form-group">
-        <button [disabled]="loading" class="btn btn-primary">
-            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-            Login
-        </button>
-        <a routerLink="/register" class="btn btn-link">Register</a>
-    </div>
-</form>
+    </form>
+</div>

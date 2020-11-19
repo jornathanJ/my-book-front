@@ -10,13 +10,13 @@
     <span class="example-app-name">My library</span>
     <span class="example-fill-remaining-space"></span>
 
-    <span *ngIf="loginUser.id == 0">
+    <span *ngIf="loginUser == null || loginUser.id == ''">
       <a mat-list-item routerLink="/login" routerLinkActive="active">
         <mat-icon>login</mat-icon>
       </a>
     </span>
-    <span *ngIf="loginUser.id != 0">
-      <a style="font-size: 15px;">{{ loginUser.username }} / notifications: {{ notificationCount }}</a>
+    <span *ngIf="loginUser != null && loginUser.id != ''">
+      <a style="font-size: 15px;">{{ loginUser.engName }} / notifications: {{ notificationCount }}</a>
       <button mat-icon-button>
         <mat-icon>more_vert</mat-icon>
       </button>
