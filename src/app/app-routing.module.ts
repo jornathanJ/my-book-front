@@ -17,7 +17,7 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(
     routes,
-    { enableTracing: true } // <-- 디버그 활성화
+    { enableTracing: false } // <-- 디버그 활성화
     )],
   exports: [RouterModule]
 })

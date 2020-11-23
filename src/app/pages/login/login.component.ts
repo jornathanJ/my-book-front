@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/shared/service/authentication.service';
 import { User } from 'src/app/shared/class/user';
 import { MyBookService } from 'src/app/shared/service/my-book.service';
@@ -18,6 +18,8 @@ export class LoginComponent implements OnInit {
   //submitted = false;
   returnUrl: string;
   model = new User("", "", "");
+  stateCtrl = new FormControl();
+  searchForm: FormGroup;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -34,11 +36,16 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    
-    // this.loginForm = this.formBuilder.group({
-    //     username: ['', Validators.required],
-    //     password: ['', Validators.required]
-    // });
+    //https://ksrae.github.io/angular/formgroup/
+    this.searchForm = this.formBuilder.group({
+      engName: ['', Validators.required],
+      id: ['', Validators.required]
+    });
+
+    //https://ksrae.github.io/angular/formgroup/
+    this.searchForm.valueChanges.subscribe(observer => {
+      console.log(this.searchForm.valid);
+    });
 
     // // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
@@ -48,6 +55,11 @@ export class LoginComponent implements OnInit {
   //get f() { return this.loginForm.controls; }
 
   onSubmit() {
+
+    //https://ksrae.github.io/angular/formgroup/
+    const { engName, id } = this.searchForm.controls;
+    console.log(`engName is ${engName.value} and id is ${id.value}`);
+
     this.myBookService.findUser(this.model.id)
       .subscribe(
         (responseUser: User) => {

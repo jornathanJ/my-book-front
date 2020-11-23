@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { isDevMode, NgModule } from '@angular/core';
+import { isDevMode, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -29,6 +29,9 @@ import { myBookReducerMap } from './shared/service/my-book.reducer';
 import { RegisterComponent } from './pages/register/register.component';
 
 @NgModule({
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA //https://ksrae.github.io/angular/formgroup/
+  ],
   declarations: [
     AppComponent,
     LoginComponent,

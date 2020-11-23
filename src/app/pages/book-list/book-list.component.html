@@ -8,6 +8,8 @@
     <app-shared-mat-table
       #matTable
       [columnInfoList]="columnInfoList"
+      (buttonClicked)="buttonClickedEvent($event)"
+      (rowClicked)="rowClickedEvent($event)"
     ></app-shared-mat-table>
   </div>
 </div>

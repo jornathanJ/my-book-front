@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort, MatSidenav } from '@angular/material';
 import { SharedMatTableComponent } from 'src/app/shared/component/shared-mat-table/shared-mat-table.component';
 import { ColumnInfo, MyBook } from 'src/app/shared/interface/book-info-interface';
 import { createAction, State, Store, select } from '@ngrx/store';
@@ -11,6 +11,7 @@ import { MyBookAppState, getMyBookSelector } from 'src/app/shared/service/my-boo
 import { GetMyBooksListAction } from 'src/app/shared/service/my-book.action';
 import { DataSharedService } from 'src/app/shared/service/dataShareService';
 import { User } from 'src/app/shared/class/user';
+import { EventInfo } from 'src/app/shared/interface/event-info.interface';
 
 export interface PeriodicElement {
   name: string;
@@ -27,15 +28,16 @@ export interface PeriodicElement {
 export class BookListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('matTable') matTable: SharedMatTableComponent;
-
   public bookList: any;
   public baseBookListUrl = '/books';
   public naverOpenAPIUrl = '/books/naver/search';
 
   columnInfoList: ColumnInfo[] = [
+    { header: '', binding: 'select', type: 'select'},
     { header: ' Tag     ', binding: 'id', type: 'normal'},
     { header: ' Title ', binding: 'title' , type: 'normal'},
     { header: ' 대출 ', binding: 'isLoaned', type: 'buttonTF', conditionTF: { trueText: '대출 불가', falseText: '대출 가능' } },
+    { header: ' 반납 ', binding: 'temp', type: 'button' },
     { header: ' Status ', binding: 'bookStatus' , type: 'normal'},
     { header: ' 대출자 ', binding: 'currentUserName' , type: 'normal'},
     { header: ' 세부정보 ', binding: 'hasDetailInfo', type: 'booleanText', conditionTF: { trueText: '있음', falseText: '없음' } },
@@ -69,6 +71,7 @@ export class BookListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+    
     this.mybooks$
     .pipe(
       distinctUntilChanged((previous: MyBook [], current: MyBook []) => {
@@ -165,6 +168,14 @@ export class BookListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   bindData(dataSource: any[]) {
     this.matTable.bindData(dataSource);
+  }
+
+  buttonClickedEvent(event: EventInfo){
+    console.log(`buttonClickedEvent fired: ${event}`);
+  }
+
+  rowClickedEvent(event: EventInfo){
+    console.log(`rowClickedEvent fired: ${event}`);
   }
 
 }

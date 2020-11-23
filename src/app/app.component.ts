@@ -1,6 +1,6 @@
 import { Component, ViewChild, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { MatSidenavContainer, MatSidenav } from '@angular/material';
 import { slideInAnimation } from './animations';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,6 +10,7 @@ import { User, UserMaker } from './shared/class/user';
 import { DataSharedService } from './shared/service/dataShareService';
 import { EventInfo, EVENT_NAME } from './shared/interface/event-info.interface';
 import { MyBookService } from './shared/service/my-book.service';
+import { filter } from 'rxjs/operators';
 
 
 
@@ -38,13 +39,29 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private sharedService: DataSharedService,
               private translate: TranslateService,
               private authenticationService: AuthenticationService,
-              private myBookService: MyBookService ) {
+              private myBookService: MyBookService,
+              private router: Router,
+              private activatedRoute : ActivatedRoute ) {
+
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)  
+    ).subscribe((event: NavigationEnd) => {
+      console.log('this.router.events : ' + event.url);
+      //if (event.url == '/login'){
+        this.sideNavBookDetail.toggle(false);
+      //}
+    });
+
+    this.activatedRoute.url.subscribe(url =>{
+      console.log('this.activatedRoute.url.subscribe : ' + url);
+    });
 
     // this language will be used as a fallback when a translation isn't found in the current language
     translate.setDefaultLang('en');
 
     // the lang to use, if the lang isn't available, it will use the current loader to get them
     translate.use('en');
+
   }
   ngOnInit(): void {
     this.loginUser = UserMaker.initialize();

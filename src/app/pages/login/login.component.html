@@ -1,24 +1,49 @@
-﻿<div class="container">
-    <h2>Login</h2>
-    <form  (ngSubmit)="onSubmit()" #heroForm="ngForm">
-        <div class="form-group">
-            <mat-form-field>
-              <input matInput placeholder="영문이름" [(ngModel)]="model.engName" name="engName" required/>
-            </mat-form-field>
-          </div>
-        <div class="form-group">
-            <mat-form-field>
-              <input matInput placeholder="사번" [(ngModel)]="model.id" name="id" required/>
-            </mat-form-field>
-          </div>
-        <div class="form-group">
-            <button mat-raised-button style="margin-right: 10px;"  class="btn btn-primary">
-                <!-- <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span> -->
-                Login
-            </button>
-            <button mat-raised-button type="button" style="margin-right: 10px;"  class="btn btn-default" (click)="register()"  >
-                Register
-              </button>
-        </div>
-    </form>
-</div>
+﻿  <mat-card>
+    <mat-card-title>Login</mat-card-title>
+    <mat-card-content>
+      <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+        <p>
+          <mat-form-field>
+            <input
+              type="text"
+              matInput
+              placeholder="영문이름"
+              [(ngModel)]="model.engName"
+              name="engName"
+              required
+            />
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field>
+            <input
+              type="password"
+              matInput
+              placeholder="사번"
+              [(ngModel)]="model.id"
+              name="id"
+              required
+            />
+          </mat-form-field>
+        </p>
+        <p>
+          <button
+            mat-raised-button
+            style="margin-right: 10px"
+            class="btn btn-primary"
+          >
+            Login
+          </button>
+          <button
+            mat-raised-button
+            type="button"
+            style="margin-right: 10px"
+            class="btn btn-default"
+            (click)="register()"
+          >
+            Register
+          </button>
+        </p>
+      </form>
+    </mat-card-content>
+  </mat-card>
